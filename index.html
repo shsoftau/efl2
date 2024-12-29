@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resizable Table Columns</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            table-layout: fixed; /* Makes columns adjustable */
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            resize: horizontal; /* Allows resizing columns */
+        }
+    </style>
+</head>
+<body>
+    <h1>Resizable Table Columns</h1>
+    <div class="table-container">
+        <table id="dataTable">
+            <colgroup>
+                <col style="width: 150px;"> <!-- Set default column width -->
+                <col style="width: 200px;">
+                <col style="width: 150px;">
+            </colgroup>
+            <thead>
+                <tr></tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
