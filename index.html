@@ -36,10 +36,26 @@
             background-color: #f4f4f4;
             resize: horizontal; /* Allows resizing columns */
         }
+
+        #leagueFilter {
+            margin: 10px 0;
+            padding: 5px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
     <h1>Resizable Table Columns</h1>
+
+    <!-- League Filter Dropdown -->
+    <div>
+        <label for="leagueFilter">Filter by League:</label>
+        <select id="leagueFilter">
+            <option value="">Select a League</option>
+        </select>
+    </div>
+
+    <!-- Table Container -->
     <div class="table-container">
         <table id="dataTable">
             <colgroup>

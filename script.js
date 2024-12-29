@@ -1,5 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
-    fetch("https://www.footydatasheet.com/2024Fc7fb2ee9/leagues/standings/new_ALL_standings_2024.csv?timestamp=" + Date.now()) // Ensure the file path matches the location of standings.csv
+    const leagueFilter = document.createElement("select");
+    leagueFilter.id = "leagueFilter";
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select a League";
+    leagueFilter.appendChild(defaultOption);
+    document.body.insertBefore(leagueFilter, document.body.firstChild);
+
+    fetch("https://www.footydatasheet.com/2024Fc7fb2ee9/leagues/standings/new_ALL_standings_2024.csv?timestamp=" + Date.now())
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -7,7 +15,9 @@ document.addEventListener("DOMContentLoaded", () => {
             return response.text();
         })
         .then(csvContent => {
-            displayCSVData(csvContent);
+            const rows = parseCSV(csvContent);
+            populateDropdown(rows);
+            displayCSVData(rows);
         })
         .catch(error => {
             console.error("Error loading CSV file:", error);
@@ -16,19 +26,51 @@ document.addEventListener("DOMContentLoaded", () => {
             document.body.appendChild(errorMessage);
         });
 
-    function displayCSVData(csvContent) {
+    function parseCSV(csvContent) {
         const rows = csvContent.trim().split("\n").map(row => row.split(","));
-        const headerRow = rows[0];
-        const dataRows = rows.slice(1);
+        return {
+            headers: rows[0],
+            data: rows.slice(1),
+        };
+    }
 
-        // Create table headers
+    function populateDropdown(rows) {
+        const leagueIndex = rows.headers.indexOf("league");
+        if (leagueIndex === -1) {
+            console.error("The 'league' column is not found in the CSV data.");
+            return;
+        }
+
+        const uniqueLeagues = [...new Set(rows.data.map(row => row[leagueIndex]))];
+        const dropdown = document.getElementById("leagueFilter");
+
+        uniqueLeagues.forEach(league => {
+            const option = document.createElement("option");
+            option.value = league;
+            option.textContent = league;
+            dropdown.appendChild(option);
+        });
+
+        // Add event listener to filter data on selection
+        dropdown.addEventListener("change", () => {
+            const selectedLeague = dropdown.value;
+            const filteredData = selectedLeague
+                ? rows.data.filter(row => row[leagueIndex] === selectedLeague)
+                : rows.data;
+            displayCSVData({ headers: rows.headers, data: filteredData });
+        });
+    }
+
+    function displayCSVData(rows) {
         const table = document.getElementById("dataTable");
         const theadRow = table.querySelector("thead tr");
-        theadRow.innerHTML = headerRow.map(header => `<th>${header}</th>`).join("");
+        const tbody = table.querySelector("tbody");
+
+        // Create table headers
+        theadRow.innerHTML = rows.headers.map(header => `<th>${header}</th>`).join("");
 
         // Create table body
-        const tbody = table.querySelector("tbody");
-        tbody.innerHTML = dataRows
+        tbody.innerHTML = rows.data
             .map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`)
             .join("");
     }
