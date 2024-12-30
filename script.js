@@ -1,7 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const leagueFilter = document.getElementById("leagueFilter");
+    const dataBaseUrl = "https://www.footydatasheet.com/2024Fc7fb2ee9/leagues/standings/";
+    const imageBaseUrl = "https://www.footydatasheet.com/team_logos/";
 
-    fetch("https://www.footydatasheet.com/2024Fc7fb2ee9/leagues/standings/new_ALL_standings_2024.csv?timestamp=" + Date.now())
+    fetch(dataBaseUrl + "new_ALL_standings_2024.csv?timestamp=" + Date.now())
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -10,7 +11,6 @@ document.addEventListener("DOMContentLoaded", () => {
         })
         .then(csvContent => {
             const rows = parseCSV(csvContent);
-            populateDropdown(rows);
             displayCSVData(rows);
         })
         .catch(error => {
@@ -28,43 +28,31 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
-    function populateDropdown(rows) {
-        const leagueIndex = rows.headers.indexOf("league");
-        if (leagueIndex === -1) {
-            console.error("The 'league' column is not found in the CSV data.");
-            return;
-        }
-
-        const uniqueLeagues = [...new Set(rows.data.map(row => row[leagueIndex]))];
-
-        uniqueLeagues.forEach(league => {
-            const option = document.createElement("option");
-            option.value = league;
-            option.textContent = league;
-            leagueFilter.appendChild(option);
-        });
-
-        // Add event listener to filter data on selection
-        leagueFilter.addEventListener("change", () => {
-            const selectedLeague = leagueFilter.value;
-            const filteredData = selectedLeague
-                ? rows.data.filter(row => row[leagueIndex] === selectedLeague)
-                : rows.data;
-            displayCSVData({ headers: rows.headers, data: filteredData });
-        });
-    }
-
     function displayCSVData(rows) {
         const table = document.getElementById("dataTable");
         const theadRow = table.querySelector("thead tr");
         const tbody = table.querySelector("tbody");
 
-        // Create table headers
-        theadRow.innerHTML = rows.headers.map(header => `<th>${header}</th>`).join("");
+        // Identify the index of the team_id column
+        const teamIdIndex = rows.headers.indexOf("team_id");
 
-        // Create table body
+        // Create new headers, excluding team_id and adding a Logo column
+        const newHeaders = [...rows.headers];
+        newHeaders.splice(teamIdIndex, 1); // Remove team_id
+        newHeaders.push("Logo"); // Add Logo column
+
+        // Update table headers
+        theadRow.innerHTML = newHeaders.map(header => `<th>${header}</th>`).join("");
+
+        // Update table body
         tbody.innerHTML = rows.data
-            .map(row => `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}</tr>`)
+            .map(row => {
+                // Remove team_id and add logo image
+                const teamId = row[teamIdIndex];
+                row.splice(teamIdIndex, 1); // Remove team_id
+                const logoCell = `<td><img src="${imageBaseUrl}${teamId}.png" alt="Logo" style="max-width: 20px; height: auto;"></td>`;
+                return `<tr>${row.map(cell => `<td>${cell}</td>`).join("")}${logoCell}</tr>`;
+            })
             .join("");
     }
 });
