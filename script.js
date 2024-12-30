@@ -1,11 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const leagueFilter = document.createElement("select");
-    leagueFilter.id = "leagueFilter";
-    const defaultOption = document.createElement("option");
-    defaultOption.value = "";
-    defaultOption.textContent = "Select a League";
-    leagueFilter.appendChild(defaultOption);
-    document.body.insertBefore(leagueFilter, document.body.firstChild);
+    const leagueFilter = document.getElementById("leagueFilter");
 
     fetch("https://www.footydatasheet.com/2024Fc7fb2ee9/leagues/standings/new_ALL_standings_2024.csv?timestamp=" + Date.now())
         .then(response => {
@@ -23,7 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Error loading CSV file:", error);
             const errorMessage = document.createElement("p");
             errorMessage.textContent = "Failed to load CSV data. Please check the console for more details.";
-            document.body.appendChild(errorMessage);
+            document.querySelector(".right-pane").appendChild(errorMessage);
         });
 
     function parseCSV(csvContent) {
@@ -42,18 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const uniqueLeagues = [...new Set(rows.data.map(row => row[leagueIndex]))];
-        const dropdown = document.getElementById("leagueFilter");
 
         uniqueLeagues.forEach(league => {
             const option = document.createElement("option");
             option.value = league;
             option.textContent = league;
-            dropdown.appendChild(option);
+            leagueFilter.appendChild(option);
         });
 
         // Add event listener to filter data on selection
-        dropdown.addEventListener("change", () => {
-            const selectedLeague = dropdown.value;
+        leagueFilter.addEventListener("change", () => {
+            const selectedLeague = leagueFilter.value;
             const filteredData = selectedLeague
                 ? rows.data.filter(row => row[leagueIndex] === selectedLeague)
                 : rows.data;

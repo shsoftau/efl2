@@ -3,18 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resizable Table Columns</title>
+    <title>Standings</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
         }
 
-        h1 {
+        /* Top title section */
+        .title-section {
+            background-color: #333;
+            color: white;
             text-align: center;
+            padding: 15px;
+            font-size: 24px;
+            font-weight: bold;
         }
 
-        .table-container {
+        /* Main content layout */
+        .main-container {
+            display: flex;
+            flex: 1;
+        }
+
+        /* Left pane with buttons */
+        .left-pane {
+            width: 200px;
+            background-color: #f4f4f4;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .left-pane button {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            border: 1px solid #ccc;
+            background-color: white;
+            text-align: left;
+        }
+
+        .left-pane button:hover {
+            background-color: #ddd;
+        }
+
+        /* Right pane for table */
+        .right-pane {
+            flex: 1;
+            padding: 20px;
             overflow-x: auto;
         }
 
@@ -45,29 +86,48 @@
     </style>
 </head>
 <body>
-    <h1>Resizable Table Columns</h1>
 
-    <!-- League Filter Dropdown -->
-    <div>
-        <label for="leagueFilter">Filter by League:</label>
-        <select id="leagueFilter">
-            <option value="">Select a League</option>
-        </select>
+    <!-- Title Section -->
+    <div class="title-section">
+        Standings
     </div>
 
-    <!-- Table Container -->
-    <div class="table-container">
-        <table id="dataTable">
-            <colgroup>
-                <col style="width: 150px;"> <!-- Set default column width -->
-                <col style="width: 200px;">
-                <col style="width: 150px;">
-            </colgroup>
-            <thead>
-                <tr></tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+    <!-- Main Container -->
+    <div class="main-container">
+
+        <!-- Left Pane with Buttons -->
+        <div class="left-pane">
+            <button id="btn1">Button 1</button>
+            <button id="btn2">Button 2</button>
+            <button id="btn3">Button 3</button>
+            <button id="btn4">Button 4</button>
+            <button id="btn5">Button 5</button>
+            <button id="btn6">Button 6</button>
+            <button id="btn7">Button 7</button>
+        </div>
+
+        <!-- Right Pane for Data Table -->
+        <div class="right-pane">
+            <div>
+                <label for="leagueFilter">Filter by League:</label>
+                <select id="leagueFilter">
+                    <option value="">Select a League</option>
+                </select>
+            </div>
+
+            <table id="dataTable">
+                <colgroup>
+                    <col style="width: 150px;"> <!-- Set default column width -->
+                    <col style="width: 200px;">
+                    <col style="width: 150px;">
+                </colgroup>
+                <thead>
+                    <tr></tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
