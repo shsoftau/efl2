@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { csvName: "all_goals_against", displayName: "GA", width: "80px", align: "center" },
         { csvName: "goalsDiff", displayName: "GD", width: "80px", align: "center" },
         { csvName: "points", displayName: "Points", width: "80px", align: "center" },
-        { csvName: "form", displayName: "Last 5", width: "120px", align: "center" },
+        { csvName: "form", displayName: "Last 5", width: "180px", align: "center" },
     ];
 
     fetch(dataBaseUrl + "new_ALL_standings_2024.csv?timestamp=" + Date.now())
@@ -49,9 +49,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Apply fixed layout style to the table
         table.style.tableLayout = "fixed";
-        table.style.width = "auto"; // Remove forced max width setting
+        table.style.width = "auto";
         table.style.overflow = "hidden";
-        table.style.borderCollapse = "collapse"; // Ensure borders collapse
+        table.style.borderCollapse = "collapse";
 
         const theadRow = table.querySelector("thead tr");
         const tbody = table.querySelector("tbody");
@@ -84,8 +84,21 @@ document.addEventListener("DOMContentLoaded", () => {
                                 </td>`;
                     } else if (column.csvName === "form") {
                         const formValue = row[headerIndexMap[column.csvName]] || "";
-                        const reversedForm = formValue.split("").reverse().join("");
-                        return `<td style="width: ${column.width}; text-align: ${column.align}; overflow: hidden; box-sizing: border-box; border-bottom: 1px solid #ccc;">${reversedForm}</td>`;
+                        const symbolMap = {
+                            W: "🟢", // Win
+                            L: "🔴", // Loss
+                            D: "⚪️"  // Draw
+                        };
+                        // Reverse the form symbols
+                        const formSymbols = formValue.split("").map(char => symbolMap[char] || char).reverse();
+                        const formattedSymbols = formSymbols
+                            .map((symbol, index) =>
+                                index === formSymbols.length - 1
+                                    ? `<span style="font-size: 1.3em;">${symbol}</span>` // Larger font for the last symbol
+                                    : `<span>${symbol}</span>`
+                            )
+                            .join(" ");
+                        return `<td style="width: ${column.width}; text-align: ${column.align}; overflow: hidden; box-sizing: border-box; border-bottom: 1px solid #ccc;">${formattedSymbols}</td>`;
                     } else {
                         return `<td style="width: ${column.width}; text-align: ${column.align}; overflow: hidden; box-sizing: border-box; border-bottom: 1px solid #ccc;">${row[headerIndexMap[column.csvName]] || ""}</td>`;
                     }
